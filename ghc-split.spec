@@ -4,6 +4,7 @@
 #
 %define		pkgname	split
 Summary:	Combinator library for splitting lists
+Summary(pl.UTF-8):	Biblioteka kombinatora do dzielenia list
 Name:		ghc-%{pkgname}
 Version:	0.2.3.4
 Release:	2
@@ -14,8 +15,10 @@ Source0:	http://hackage.haskell.org/package/%{pkgname}-%{version}/%{pkgname}-%{v
 # Source0-md5:	2aab953bd696407e702e669e91180864
 URL:		http://hackage.haskell.org/package/split
 BuildRequires:	ghc >= 6.12.3
+BuildRequires:	ghc-base < 4.15
 %if %{with prof}
-BuildRequires:	ghc-prof
+BuildRequires:	ghc-prof >= 6.12.3
+BuildRequires:	ghc-base-prof < 4.15
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.608
 %requires_eq	ghc
@@ -32,6 +35,10 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 A collection of various methods for splitting lists into parts,
 akin to the "split" function found in several mainstream languages.
 
+%description -l pl.UTF-8
+Zbiór różnych metod do dzielenia list na części, podobna do funkcji
+"split" dostępnej w kilku językach głównego nurtu.
+
 %package prof
 Summary:	Profiling %{pkgname} library for GHC
 Summary(pl.UTF-8):	Biblioteka profilująca %{pkgname} dla GHC
@@ -39,8 +46,8 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description prof
-Profiling %{pkgname} library for GHC.  Should be installed when
-GHC's profiling subsystem is needed.
+Profiling %{pkgname} library for GHC. Should be installed when GHC's
+profiling subsystem is needed.
 
 %description prof -l pl.UTF-8
 Biblioteka profilująca %{pkgname} dla GHC. Powinna być zainstalowana
@@ -58,6 +65,7 @@ runhaskell Setup.lhs configure -v2 \
 	--docdir=%{_docdir}/%{name}-%{version}
 
 runhaskell Setup.lhs build
+
 runhaskell Setup.lhs haddock --executables
 
 %install
@@ -68,8 +76,7 @@ runhaskell Setup.lhs copy --destdir=$RPM_BUILD_ROOT
 
 # work around automatic haddock docs installation
 %{__rm} -rf %{name}-%{version}-doc
-cp -a $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} %{name}-%{version}-doc
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+%{__mv} $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} %{name}-%{version}-doc
 
 runhaskell Setup.lhs register \
 	--gen-pkg-config=$RPM_BUILD_ROOT%{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
